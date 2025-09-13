@@ -1,0 +1,35 @@
+{
+  "name": "sistem-deteksi-bibit-jati",
+  "version": "1.0.0",
+  "description": "main api untuk tugas skripsi pendeteksi bibit jati",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start-dev": "nodemon src/server.js",
+    "lint": "eslint ./src",
+    "migrate": "node-pg-migrate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AryKurnia",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^21.4.2",
+    "@hapi/inert": "^7.1.0",
+    "@hapi/jwt": "^3.2.1",
+    "auto-bind": "^4.0.0",
+    "axios": "^1.11.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
+    "form-data": "^4.0.4",
+    "joi": "^17.13.3",
+    "nanoid": "^3.3.6",
+    "node-pg-migrate": "^8.0.3",
+    "pg": "^8.16.3"
+  }
+}

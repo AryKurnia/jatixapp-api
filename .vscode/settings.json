@@ -1,0 +1,7 @@
+{
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "workbench.colorTheme": "One Dark Pro Darker", // Atur nama tema yang Anda gunakan
+  "workbench.iconTheme": "material-icon-theme"    // Untuk ikon yang mendukung tema
+}
