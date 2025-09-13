@@ -6,6 +6,7 @@ const Jwt = require('@hapi/jwt');
 // predictions
 const predictions = require('./api/predictions');
 const PredictionsService = require('./services/postgres/PredictionsService');
+const ModelPredictionService = require('./services/model/ModelPredictionService');
 const PredictionsValidator = require('./validator/predictions');
 
 // users
@@ -23,6 +24,7 @@ const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
   const predictionsService = new PredictionsService();
+  const modelPredictionService = new ModelPredictionService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
 
@@ -56,6 +58,7 @@ const init = async () => {
       isValid: true,
       credentials: {
         id: artifacts.decoded.payload.id,
+        admin: artifacts.decoded.payload.admin,
       },
     }),
   });
@@ -65,6 +68,7 @@ const init = async () => {
       plugin: predictions,
       options: {
         service: predictionsService,
+        modelPredictionService,
         validator: PredictionsValidator,
       },
     },

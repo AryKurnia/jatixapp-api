@@ -5,11 +5,29 @@ class UsersHandler {
     this._service = service;
     this._validator = validator;
 
+    this.postAdminUserHandler = this.postAdminUserHandler.bind(this);
     this.postUserHandler = this.postUserHandler.bind(this);
     this.getUsersHandler = this.getUsersHandler.bind(this);
     this.getUserByIdHandler = this.getUserByIdHandler.bind(this);
     this.putUserByIdHandler = this.putUserByIdHandler.bind(this);
     this.deleteUserByIdHandler = this.deleteUserByIdHandler.bind(this);
+  }
+
+  async postAdminUserHandler(request, h) {
+    this._validator.validateUserPayload(request.payload);
+    const { username, password, fullname } = request.payload;
+
+    const userId = await this._service.addAdminUser({ username, password, fullname });
+
+    const response = h.response({
+      status: 'success',
+      message: 'Admin berhasil ditambahkan',
+      data: {
+        userId,
+      },
+    });
+    response.code(201);
+    return response;
   }
 
   async postUserHandler(request, h) {

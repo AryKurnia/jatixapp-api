@@ -1,6 +1,19 @@
 const routes = (handler) => [
   {
     method: 'POST',
+    path: '/predictions/umum',
+    handler: handler.postPredictionUmumHandler,
+    options: {
+      payload: {
+        output: 'file',
+        parse: true,
+        multipart: true,
+        maxBytes: 10 * 1024 * 1024, // max 10 MB
+      },
+    },
+  },
+  {
+    method: 'POST',
     path: '/predictions',
     handler: handler.postPredictionHandler,
     options: {

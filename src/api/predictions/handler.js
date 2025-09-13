@@ -1,17 +1,39 @@
 /* eslint-disable no-underscore-dangle */
-const fs = require('fs');
-const FormData = require('form-data');
-const axios = require('axios');
 
 class PredictionsHandler {
-  constructor(service, validator) {
+  constructor(service, modelPredictionService, validator) {
     this._service = service;
+    this._modelPredictionService = modelPredictionService;
     this._validator = validator;
 
+    this.postPredictionUmumHandler = this.postPredictionUmumHandler.bind(this);
     this.postPredictionHandler = this.postPredictionHandler.bind(this);
     this.getPredictionsHandler = this.getPredictionsHandler.bind(this);
     this.getPredictionByIdHandler = this.getPredictionByIdHandler.bind(this);
     this.deletePredictionByIdHandler = this.deletePredictionByIdHandler.bind(this);
+  }
+
+  async postPredictionUmumHandler(request, h) {
+    this._validator.validatePredictionPayload(request.payload);
+
+    const file = request.payload.image;
+
+    // Ambil hasil prediksi dari API Flask
+    const {
+      classification, confidence, probabilities,
+    } = await this._modelPredictionService.predictImage(file);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Prediction berhasil',
+      data: {
+        classification,
+        confidence,
+        probabilities,
+      },
+    });
+    response.code(201);
+    return response;
   }
 
   async postPredictionHandler(request, h) {
@@ -19,26 +41,15 @@ class PredictionsHandler {
 
     const file = request.payload.image;
 
-    if (!file) {
-      return h.response({ error: 'Gambar tidak ditemukan' }).code(400);
-    }
-
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(file.path), file.filename);
-
-    const responsePredictApi = await axios.post(process.env.PREDICT_API_URL, formData, {
-      headers: {
-        ...formData.getHeaders(),
-      },
-    });
-
     // Ambil hasil prediksi dari API Flask
-    const { predicted_class: prediction, confidence } = responsePredictApi.data;
+    const {
+      classification, confidence, probabilities,
+    } = await this._modelPredictionService.predictImage(file);
 
     const { id: credentialId } = request.auth.credentials;
 
     const predictionId = await this._service.addPrediction({
-      confidence, prediction, owner: credentialId,
+      confidence, prediction: classification, owner: credentialId,
     });
 
     const response = h.response({
@@ -46,9 +57,9 @@ class PredictionsHandler {
       message: 'Prediction berhasil',
       data: {
         predictionId,
-        classification: responsePredictApi.data.predicted_class,
-        confidence: responsePredictApi.data.confidence,
-        all_probabilities: responsePredictApi.data.all_probabilities,
+        classification,
+        confidence,
+        probabilities,
       },
     });
     response.code(201);

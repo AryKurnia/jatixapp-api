@@ -27,6 +27,11 @@ export const up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
+    admin: {
+      type: 'BOOLEAN',
+      notNull: true,
+      default: false,
+    },
   });
 };
 
