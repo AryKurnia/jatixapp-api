@@ -27,7 +27,7 @@ class PredictionsHandler {
     } = await this._modelPredictionService.predictImage(file);
 
     // Simpan gambar ke object storage
-    const fileUrl = await this._storageService.storeImage(file, classification);
+    const fileUrl = await this._storageService.storeImagePredict(file, classification);
 
     const response = h.response({
       status: 'success',
@@ -56,7 +56,7 @@ class PredictionsHandler {
     } = await this._modelPredictionService.predictImage(file);
 
     // Simpan gambar ke object storage
-    const fileUrl = await this._storageService.storeImage(file, classification);
+    const fileUrl = await this._storageService.storeImagePredict(file, classification);
 
     const predictionId = await this._service.addPrediction({
       confidence, prediction: classification, fileUrl, owner: credentialId,

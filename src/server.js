@@ -3,6 +3,11 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 
+// datasets
+const datasets = require('./api/datasets');
+// const DatasetsService = require('./services/postgres/DatasetService');
+const DatasetsValidator = require('./validator/datasets');
+
 // predictions
 const predictions = require('./api/predictions');
 const PredictionsService = require('./services/postgres/PredictionsService');
@@ -66,6 +71,13 @@ const init = async () => {
   });
 
   await server.register([
+    {
+      plugin: datasets,
+      options: {
+        storageService,
+        validator: DatasetsValidator,
+      },
+    },
     {
       plugin: predictions,
       options: {
