@@ -27,11 +27,16 @@ export const up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
-    admin: {
-      type: 'BOOLEAN',
+    scope: {
+      type: 'VARCHAR(20)',
       notNull: true,
-      default: false,
+      default: 'user',
     },
+  });
+
+  // tambahkan constraint untuk validasi role
+  pgm.addConstraint('users', 'valid_scope', {
+    check: "scope IN ('user', 'admin')",
   });
 };
 
