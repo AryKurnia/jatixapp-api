@@ -12,7 +12,7 @@ class PredictionsService {
   }
 
   async addPrediction({
-    confidence, prediction, owner,
+    confidence, prediction, fileUrl, owner,
   }) {
     // Method ini untuk menambahkan catatan
     const id = nanoid(16);
@@ -20,8 +20,8 @@ class PredictionsService {
     const createdAt = new Date().toISOString();
 
     const query = {
-      text: 'INSERT INTO predictions VALUES($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, prediction, confidence, createdAt, owner],
+      text: 'INSERT INTO predictions VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      values: [id, prediction, confidence, fileUrl, createdAt, owner],
     };
 
     const result = await this._pool.query(query);

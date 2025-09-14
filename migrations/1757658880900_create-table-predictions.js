@@ -22,6 +22,10 @@ export const up = (pgm) => {
       type: 'FLOAT',
       notNull: true,
     },
+    fileUrl: {
+      type: 'TEXT',
+      notNull: true,
+    },
     created_at: {
       type: 'TEXT',
       notNull: true,

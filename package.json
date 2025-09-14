@@ -19,6 +19,7 @@
     "nodemon": "^3.0.1"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.888.0",
     "@hapi/hapi": "^21.4.2",
     "@hapi/inert": "^7.1.0",
     "@hapi/jwt": "^3.2.1",
