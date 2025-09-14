@@ -16,10 +16,10 @@ class AuthenticationsHandler {
     this._validator.validatePostAuthenticationPayload(request.payload);
     const { username, password } = request.payload;
 
-    const id = await this._usersService.verifyUserCredential(username, password);
+    const { id, scope } = await this._usersService.verifyUserCredential(username, password);
 
-    const accessToken = this._tokenManager.generateAccessToken({ id });
-    const refreshToken = this._tokenManager.generateRefreshToken({ id });
+    const accessToken = this._tokenManager.generateAccessToken({ id, scope });
+    const refreshToken = this._tokenManager.generateRefreshToken({ id, scope });
 
     // simpan refresh token ke database
     await this._authenticationsService.addRefreshToken(refreshToken);
@@ -41,9 +41,9 @@ class AuthenticationsHandler {
 
     const { refreshToken } = request.payload;
     await this._authenticationsService.verifyRefreshToken(refreshToken);
-    const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
+    const { id, scope } = this._tokenManager.verifyRefreshToken(refreshToken);
 
-    const accessToken = this._tokenManager.generateAccessToken({ id });
+    const accessToken = this._tokenManager.generateAccessToken({ id, scope });
 
     return {
       status: 'success',

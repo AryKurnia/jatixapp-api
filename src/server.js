@@ -58,7 +58,7 @@ const init = async () => {
       isValid: true,
       credentials: {
         id: artifacts.decoded.payload.id,
-        admin: artifacts.decoded.payload.admin,
+        scope: artifacts.decoded.payload.scope,
       },
     }),
   });

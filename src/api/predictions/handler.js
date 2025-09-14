@@ -37,7 +37,10 @@ class PredictionsHandler {
   }
 
   async postPredictionHandler(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+
     this._validator.validatePredictionPayload(request.payload);
+    // this._service.verifyAdminUser(credentialId);
 
     const file = request.payload.image;
 
@@ -45,8 +48,6 @@ class PredictionsHandler {
     const {
       classification, confidence, probabilities,
     } = await this._modelPredictionService.predictImage(file);
-
-    const { id: credentialId } = request.auth.credentials;
 
     const predictionId = await this._service.addPrediction({
       confidence, prediction: classification, owner: credentialId,
