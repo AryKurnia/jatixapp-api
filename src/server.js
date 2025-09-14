@@ -7,6 +7,7 @@ const Jwt = require('@hapi/jwt');
 const predictions = require('./api/predictions');
 const PredictionsService = require('./services/postgres/PredictionsService');
 const ModelPredictionService = require('./services/model/ModelPredictionService');
+const MinioService = require('./services/storrage/MinioService');
 const PredictionsValidator = require('./validator/predictions');
 
 // users
@@ -25,6 +26,7 @@ const ClientError = require('./exceptions/ClientError');
 const init = async () => {
   const predictionsService = new PredictionsService();
   const modelPredictionService = new ModelPredictionService();
+  const storageService = new MinioService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
 
@@ -69,6 +71,7 @@ const init = async () => {
       options: {
         service: predictionsService,
         modelPredictionService,
+        storageService,
         validator: PredictionsValidator,
       },
     },

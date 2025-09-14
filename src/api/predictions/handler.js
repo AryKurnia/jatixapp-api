@@ -1,9 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 
 class PredictionsHandler {
-  constructor(service, modelPredictionService, validator) {
+  constructor({
+    service, modelPredictionService, storageService, validator,
+  }) {
     this._service = service;
     this._modelPredictionService = modelPredictionService;
+    this._storageService = storageService;
     this._validator = validator;
 
     this.postPredictionUmumHandler = this.postPredictionUmumHandler.bind(this);
@@ -23,6 +26,9 @@ class PredictionsHandler {
       classification, confidence, probabilities,
     } = await this._modelPredictionService.predictImage(file);
 
+    // Simpan gambar ke object storage
+    const fileUrl = await this._storageService.storeImage(file, classification);
+
     const response = h.response({
       status: 'success',
       message: 'Prediction berhasil',
@@ -30,6 +36,7 @@ class PredictionsHandler {
         classification,
         confidence,
         probabilities,
+        fileUrl,
       },
     });
     response.code(201);
@@ -40,7 +47,6 @@ class PredictionsHandler {
     const { id: credentialId } = request.auth.credentials;
 
     this._validator.validatePredictionPayload(request.payload);
-    // this._service.verifyAdminUser(credentialId);
 
     const file = request.payload.image;
 
@@ -49,8 +55,11 @@ class PredictionsHandler {
       classification, confidence, probabilities,
     } = await this._modelPredictionService.predictImage(file);
 
+    // Simpan gambar ke object storage
+    const fileUrl = await this._storageService.storeImage(file, classification);
+
     const predictionId = await this._service.addPrediction({
-      confidence, prediction: classification, owner: credentialId,
+      confidence, prediction: classification, fileUrl, owner: credentialId,
     });
 
     const response = h.response({
@@ -61,6 +70,7 @@ class PredictionsHandler {
         classification,
         confidence,
         probabilities,
+        fileUrl,
       },
     });
     response.code(201);

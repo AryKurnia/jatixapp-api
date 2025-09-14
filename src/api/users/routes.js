@@ -1,3 +1,5 @@
+const { isAdmin } = require('../../policies/authorization');
+
 const routes = (handler) => [
   {
     method: 'POST',
@@ -13,6 +15,9 @@ const routes = (handler) => [
     method: 'GET',
     path: '/users',
     handler: handler.getUsersHandler,
+    options: {
+      ...isAdmin,
+    },
   },
   {
     method: 'GET',

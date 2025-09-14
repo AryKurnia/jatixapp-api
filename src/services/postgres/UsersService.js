@@ -55,7 +55,7 @@ class UsersService {
   }
 
   async getUsers() {
-    const result = await this._pool.query('SELECT id, username, fullname FROM users');
+    const result = await this._pool.query('SELECT id, username, fullname, scope FROM users');
     return result.rows;
   }
 
