@@ -40,7 +40,6 @@ class PredictionsHandler {
     const { id: credentialId } = request.auth.credentials;
 
     this._validator.validatePredictionPayload(request.payload);
-    // this._service.verifyAdminUser(credentialId);
 
     const file = request.payload.image;
 
