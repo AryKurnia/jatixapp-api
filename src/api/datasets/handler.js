@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 
 class DatasetsHandler {
-  constructor(storageService, validator) {
+  constructor(datasetsService, storageService, validator) {
+    this._datasetsService = datasetsService;
     this._storageService = storageService;
     this._validator = validator;
 
@@ -16,10 +17,15 @@ class DatasetsHandler {
     // Simpan gambar ke object storage
     const fileUrl = await this._storageService.storeImageDataset(file, classification);
 
+    // Simpan informasi dataset ke database
+    const { id: credentialId } = request.auth.credentials;
+    const id = await this._datasetsService.addDataset(classification, fileUrl, credentialId);
+
     const response = h.response({
       status: 'success',
       message: 'Unggah dataset berhasil',
       data: {
+        id,
         classification,
         fileUrl,
       },

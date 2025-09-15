@@ -5,7 +5,7 @@ const Jwt = require('@hapi/jwt');
 
 // datasets
 const datasets = require('./api/datasets');
-// const DatasetsService = require('./services/postgres/DatasetService');
+const DatasetsService = require('./services/postgres/DatasetService');
 const DatasetsValidator = require('./validator/datasets');
 
 // predictions
@@ -34,6 +34,7 @@ const init = async () => {
   const storageService = new MinioService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const datasetsService = new DatasetsService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -74,6 +75,7 @@ const init = async () => {
     {
       plugin: datasets,
       options: {
+        datasetsService,
         storageService,
         validator: DatasetsValidator,
       },
