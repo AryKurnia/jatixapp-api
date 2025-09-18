@@ -4,22 +4,21 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const { mapDBToModel } = require('../../utils');
 
 class DatasetsService {
   constructor() {
     this._pool = new Pool();
   }
 
-  async addDataset(classification, fileUrl, credentialId) {
+  async addDataset(name, classification, fileUrl, credentialId) {
     // Method ini untuk menambahkan catatan
     const id = nanoid(16);
     // const renamedFilename = `${id}-${filename}`;
     const createdAt = new Date().toISOString();
 
     const query = {
-      text: 'INSERT INTO datasets VALUES($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, classification, fileUrl, createdAt, credentialId],
+      text: 'INSERT INTO datasets VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      values: [id, name, classification, fileUrl, createdAt, credentialId],
     };
 
     const result = await this._pool.query(query);
@@ -31,42 +30,41 @@ class DatasetsService {
     return result.rows[0].id;
   }
 
-  async getPredictions(owner) {
+  async getDatasets() {
     const query = {
-      text: 'SELECT * FROM predictions WHERE owner = $1',
-      values: [owner],
+      text: 'SELECT * FROM datasets',
     };
 
     const result = await this._pool.query(query);
 
-    return result.rows.map(mapDBToModel);
+    return result.rows;
   }
 
-  async getPredictionById(id) {
+  async getDatasetById(id) {
     const query = {
-      text: 'SELECT * FROM predictions WHERE id = $1',
+      text: 'SELECT * FROM datasets WHERE id = $1',
       values: [id],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Prediksi tidak ditemukan');
+      throw new NotFoundError('Dataset tidak ditemukan');
     }
 
-    return result.rows.map(mapDBToModel)[0];
+    return result.rows[0];
   }
 
-  async deletePredictionById(id) {
+  async deleteDatasetById(id) {
     const query = {
-      text: 'DELETE FROM predictions WHERE id = $1 RETURNING id',
+      text: 'DELETE FROM datasets WHERE id = $1 RETURNING id',
       values: [id],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Prediksi gagal dihapus. Id tidak ditemukan');
+      throw new NotFoundError('Dataset gagal dihapus. Id tidak ditemukan');
     }
   }
 

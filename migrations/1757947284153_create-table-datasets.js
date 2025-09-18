@@ -14,6 +14,10 @@ export const up = (pgm) => {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
+    name: {
+      type: 'VARCHAR(100)',
+      notNull: true,
+    },
     classification: {
       type: 'VARCHAR(50)',
       notNull: true,
