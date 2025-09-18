@@ -7,7 +7,9 @@ const DatasetPayloadSchema = Joi.object({
     bytes: Joi.number().required(),
     headers: Joi.object().required(),
   }).required(),
-  classification: Joi.string().required(),
+  classification: Joi.string()
+    .valid('Biotrop', 'Gamelina', 'Salomon')
+    .required(),
 });
 
 module.exports = { DatasetPayloadSchema };
