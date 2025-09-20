@@ -2,6 +2,14 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const Inert = require('@hapi/inert');
+const Vision = require('@hapi/vision');
+const HapiSwagger = require('hapi-swagger');
+
+// datasets
+const datasets = require('./api/datasets');
+const DatasetsService = require('./services/postgres/DatasetService');
+const DatasetsValidator = require('./validator/datasets');
 
 // predictions
 const predictions = require('./api/predictions');
@@ -29,6 +37,7 @@ const init = async () => {
   const storageService = new MinioService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const datasetsService = new DatasetsService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -40,8 +49,31 @@ const init = async () => {
     },
   });
 
+  // Opsi untuk hapi-swagger
+  const swaggerOptions = {
+    info: {
+      title: 'JatixApp API Sistem Deteksi Daun Jati',
+      version: '1.0.0',
+      description: 'Dokumentasi API untuk Sistem Deteksi Daun Jati menggunakan Hapi.js',
+    },
+    securityDefinitions: {
+      Bearer: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: "Masukkan token JWT dengan format 'Bearer {token}'",
+      },
+    },
+  };
+
   // registrasi plugin eksternal
   await server.register([
+    Inert,
+    Vision,
+    {
+      plugin: HapiSwagger,
+      options: swaggerOptions,
+    },
     {
       plugin: Jwt,
     },
@@ -66,6 +98,14 @@ const init = async () => {
   });
 
   await server.register([
+    {
+      plugin: datasets,
+      options: {
+        datasetsService,
+        storageService,
+        validator: DatasetsValidator,
+      },
+    },
     {
       plugin: predictions,
       options: {
