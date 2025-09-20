@@ -8,6 +8,8 @@ const UsersValidator = {
       throw new InvariantError(validationResult.error.message);
     }
   },
+  // Ditambahkan ini agar skema bisa diakses dari luar
+  UserPayloadSchema,
 };
 
 module.exports = UsersValidator;
